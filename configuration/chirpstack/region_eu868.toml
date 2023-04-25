@@ -268,3 +268,41 @@
     frequency=867900000
     min_dr=0
     max_dr=5
+
+    # LR_FHSS
+    [[regions.network.extra_channels]]
+    frequency=867200000
+    min_dr=8
+    max_dr=11
+
+    [[regions.network.extra_channels]]
+    frequency=867400000
+    min_dr=8
+    max_dr=11
+
+    [[regions.network.extra_channels]]
+    frequency=867600000
+    min_dr=8
+    max_dr=11
+
+    [[regions.network.extra_channels]]
+    frequency=867800000
+    min_dr=8
+    max_dr=11
+
+    [[regions.network.extra_channels]]
+    frequency=868000000
+    min_dr=8
+    max_dr=11
+
+    [[regions.network.extra_channels]]
+    frequency=868200000
+    min_dr=8
+    max_dr=11
+
+    [[regions.network.extra_channels]]
+    frequency=868600000
+    min_dr=8
+    max_dr=11
+
+

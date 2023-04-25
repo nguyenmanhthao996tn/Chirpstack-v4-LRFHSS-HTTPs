@@ -16,16 +16,76 @@ services:
       - MQTT_BROKER_HOST=mosquitto
       - REDIS_HOST=redis
       - POSTGRESQL_HOST=postgres
+    networks:
+      - chirpstack-internal
+      - proxy
     ports:
       - 8080:8080
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.chirpstack.entrypoints=web, websecure"
+      - "traefik.http.routers.chirpstack.rule=Host(`<your-domain-name>`)"
+      - "traefik.http.routers.chirpstack.tls=true"
+      - "traefik.http.routers.chirpstack.tls.certresolver=production"
 
   chirpstack-gateway-bridge-eu868:
     image: chirpstack/chirpstack-gateway-bridge:4
     restart: unless-stopped
+    networks:
+      - chirpstack-internal
     ports:
       - 1700:1700/udp
     volumes:
-      - ./configuration/chirpstack-gateway-bridge:/etc/chirpstack-gateway-bridge
+      - ./configuration/chirpstack-gateway-bridge-eu868:/etc/chirpstack-gateway-bridge
+    depends_on: 
+      - mosquitto
+
+  chirpstack-gateway-bridge-us915_0:
+    image: chirpstack/chirpstack-gateway-bridge:4
+    restart: unless-stopped
+    networks:
+      - chirpstack-internal
+    ports:
+      - 1701:1700/udp
+    volumes:
+      - ./configuration/chirpstack-gateway-bridge-us915_0:/etc/chirpstack-gateway-bridge
+    depends_on: 
+      - mosquitto
+
+  chirpstack-gateway-bridge-us915_1:
+    image: chirpstack/chirpstack-gateway-bridge:4
+    restart: unless-stopped
+    networks:
+      - chirpstack-internal
+    ports:
+      - 1702:1700/udp
+    volumes:
+      - ./configuration/chirpstack-gateway-bridge-us915_1:/etc/chirpstack-gateway-bridge
+    depends_on: 
+      - mosquitto
+
+  chirpstack-gateway-bridge-as923_2:
+    image: chirpstack/chirpstack-gateway-bridge:4
+    restart: unless-stopped
+    networks:
+      - chirpstack-internal
+    ports:
+      - 1703:1700/udp
+    volumes:
+      - ./configuration/chirpstack-gateway-bridge-as923_2:/etc/chirpstack-gateway-bridge
+    depends_on: 
+      - mosquitto
+
+  chirpstack-gateway-bridge-kr920:
+    image: chirpstack/chirpstack-gateway-bridge:4
+    restart: unless-stopped
+    networks:
+      - chirpstack-internal
+    ports:
+      - 1704:1700/udp
+    volumes:
+      - ./configuration/chirpstack-gateway-bridge-kr920:/etc/chirpstack-gateway-bridge
     depends_on: 
       - mosquitto
 
@@ -33,6 +93,8 @@ services:
     image: chirpstack/chirpstack-rest-api:4
     restart: unless-stopped
     command: --server chirpstack:8080 --bind 0.0.0.0:8090 --insecure
+    networks:
+      - chirpstack-internal
     ports:
       - 8090:8090
     depends_on:
@@ -46,16 +108,22 @@ services:
       - postgresqldata:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=root
+    networks:
+      - chirpstack-internal
 
   redis:
     image: redis:7-alpine
     restart: unless-stopped
     volumes:
       - redisdata:/data
+    networks:
+      - chirpstack-internal
 
   mosquitto:
     image: eclipse-mosquitto:2
     restart: unless-stopped
+    networks:
+      - chirpstack-internal
     ports:
       - 1883:1883
     volumes: 
@@ -64,3 +132,9 @@ services:
 volumes:
   postgresqldata:
   redisdata:
+
+networks:
+  chirpstack-internal:
+    external: false
+  proxy:
+    external: true
