@@ -97,6 +97,95 @@ max_dr=11
 )
 ```
 
+## Chirpstack binary file modification
+
+If there is no support datarate for LR-FHSS modulation found in the desired region `*.rs` file ([lrwn/src/region/<i>\<your region\></i>.rs](https://github.com/chirpstack/chirpstack/blob/master/lrwn/src/)). Modification of the Chirpstack binary is needed.
+
+### Pre-built binary
+
+- Chirpstack `4.6.0` with LR-FHSS added for AS923: [chirpstack-server-4.6.0-w-lrfhss-as923_2.tar.gz](docs/chirpstack_region_example/chirpstack-server-4.6.0-w-lrfhss-as923_2.tar.gz)
+
+### Build it your-self
+
+In details, you have to first clone & set up build environment for [chirpstack/chirpstack reposistory](https://github.com/chirpstack/chirpstack/). To build Chirpstack image, nix-shell methods is recommended. Docker method will not work (at the moment I wrote this at least). For this step, following sub-steps should be conducted:
+
+1. Clone the reposistory
+2. Install [`nix-shell`](https://nixos.org/download.html)
+3. Install [`cross-rs`](https://github.com/cross-rs/cross)
+4. Add these to `.bashrc` (or equivalent files)
+
+```
+export PATH=$PATH:~/.cargo/bin/ # Add cross executable file to PATH
+export TMDIR=/tmp/ # Avoid device has no space left issue of nix-shell
+```
+
+5. `cd` in to the local reposistory folder
+6. Start `nix-shell` with `nix-shell --impure`
+7. `make build-ui`
+8. `make dev-dependencies`
+9. `cd chirpstack/; make release-amd64;`
+
+Then, add your desired datarate with LRFHSS modulation to your `*.rs` file lrwn/src/region/<i>\<your region\></i>.rs to has LR-FHSS support. Below is an example for AS923 for version `4.6.0` (commit `f647949`). [Full modified as923.rs file](docs/chirpstack_region_example/as923.rs).
+
+In header:
+
+```
+use super::{
+    Channel, CommonName, DataRate, DataRateModulation, Defaults, FskDataRate, LinkADRReqPayload,
+    LoraDataRate, LrFhssDataRate, MacVersion, MaxPayloadSize, Region, RegionBaseConfig, Revision,
+};
+```
+
+In `data_rates` array:
+```
+(
+    8,
+    DataRate {
+        uplink: true,
+        downlink: false,
+        modulation: DataRateModulation::LrFhss(LrFhssDataRate {
+            coding_rate: "2/6".to_string(),
+            occupied_channel_width: 137000,
+        }),
+    },
+),
+(
+    9,
+    DataRate {
+        uplink: true,
+        downlink: false,
+        modulation: DataRateModulation::LrFhss(LrFhssDataRate {
+            coding_rate: "4/6".to_string(),
+            occupied_channel_width: 137000,
+        }),
+    },
+),
+(
+    10,
+    DataRate {
+        uplink: true,
+        downlink: false,
+        modulation: DataRateModulation::LrFhss(LrFhssDataRate {
+            coding_rate: "2/6".to_string(),
+            occupied_channel_width: 336000,
+        }),
+    },
+),
+(
+    11,
+    DataRate {
+        uplink: true,
+        downlink: false,
+        modulation: DataRateModulation::LrFhss(LrFhssDataRate {
+            coding_rate: "4/6".to_string(),
+            occupied_channel_width: 336000,
+        }),
+    },
+),
+```
+
+Finally, rebuild the Chirpstack `make release-amd64` or `make dist`. Your new modified binary can be found in `\<reposistory path\>/target/<platform>/release/`.
+
 ## Gateway uplink Coding Rate
 
 Currently, Chirpstack Gateway Bridge are defined valid Coding Rate for LR-FHSS as followings. If you are using Packet Forwarders in your Gateway, make sure that you are sending a valid ```CodR``` in uplink JSON. In my case, it's Semtech Packet Forwarder and Semtech define ```CodingRate 1/2``` & ```CodingRate 1/3``` instead of ```CodingRate 2/4``` & ```CodingRate 2/6``` as Chirpstack did. This will lead to the **"invalid CodR"** error.

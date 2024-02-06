@@ -5,7 +5,7 @@ use anyhow::Result;
 
 use super::{
     Channel, CommonName, DataRate, DataRateModulation, Defaults, FskDataRate, LinkADRReqPayload,
-    LoraDataRate, MacVersion, MaxPayloadSize, Region, RegionBaseConfig, Revision,
+    LoraDataRate, LrFhssDataRate, MacVersion, MaxPayloadSize, Region, RegionBaseConfig, Revision,
 };
 use crate::{CFList, DevAddr};
 
@@ -124,6 +124,50 @@ impl Configuration {
                             uplink: true,
                             downlink: true,
                             modulation: DataRateModulation::Fsk(FskDataRate { bitrate: 50000 }),
+                        },
+                    ),
+                    (
+                        8,
+                        DataRate {
+                            uplink: true,
+                            downlink: false,
+                            modulation: DataRateModulation::LrFhss(LrFhssDataRate {
+                                coding_rate: "2/6".to_string(),
+                                occupied_channel_width: 137000,
+                            }),
+                        },
+                    ),
+                    (
+                        9,
+                        DataRate {
+                            uplink: true,
+                            downlink: false,
+                            modulation: DataRateModulation::LrFhss(LrFhssDataRate {
+                                coding_rate: "4/6".to_string(),
+                                occupied_channel_width: 137000,
+                            }),
+                        },
+                    ),
+                    (
+                        10,
+                        DataRate {
+                            uplink: true,
+                            downlink: false,
+                            modulation: DataRateModulation::LrFhss(LrFhssDataRate {
+                                coding_rate: "2/6".to_string(),
+                                occupied_channel_width: 336000,
+                            }),
+                        },
+                    ),
+                    (
+                        11,
+                        DataRate {
+                            uplink: true,
+                            downlink: false,
+                            modulation: DataRateModulation::LrFhss(LrFhssDataRate {
+                                coding_rate: "4/6".to_string(),
+                                occupied_channel_width: 336000,
+                            }),
                         },
                     ),
                 ]
