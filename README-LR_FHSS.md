@@ -103,6 +103,8 @@ If there is no support datarate for LR-FHSS modulation found in the desired regi
 
 ### Pre-built binary
 
+You can use below pre-built binaries to enable the LR-FHSS Datarate (DR8-11) for AS923. Extract, copy & replace the binary **inside** docker container (`/usr/bin/chirpstack`) with the corresponding architecture binary. Restart the docker container.
+
 - Chirpstack `4.6.0` with LR-FHSS added for AS923: [chirpstack-server-4.6.0-w-lrfhss-as923_2.tar.gz](docs/chirpstack_region_example/chirpstack-server-4.6.0-w-lrfhss-as923_2.tar.gz)
 
 ### Build it your-self
