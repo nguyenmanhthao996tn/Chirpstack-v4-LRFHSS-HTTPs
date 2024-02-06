@@ -118,7 +118,7 @@ In details, you have to first clone & set up build environment for [chirpstack/c
 
 ```
 export PATH=$PATH:~/.cargo/bin/ # Add cross executable file to PATH
-export TMDIR=/tmp/ # Avoid device has no space left issue of nix-shell
+export TMPDIR=/tmp/ # Avoid device has no space left issue of nix-shell
 ```
 
 5. `cd` in to the local reposistory folder
