@@ -184,7 +184,7 @@ In `data_rates` array:
 ),
 ```
 
-Finally, rebuild the Chirpstack `make release-amd64` or `make dist`. Your new modified binary can be found in `\<reposistory path\>/target/<platform>/release/`.
+Finally, rebuild the Chirpstack `make release-amd64` (only x86_x64 architecture) or `make dist` (including x86_x64, ARM 32-bit & ARM 64-bit). Your new modified binary can be found in `\<reposistory path\>/target/<platform>/release/`. Copy & replace the binary **inside** docker container (`/usr/bin/chirpstack`) with this newly-built binary. Restart the docker container.
 
 ## Gateway uplink Coding Rate
 
